@@ -1,0 +1,8 @@
+/docs/private/
+/presentation/
+/output/
+/tmp/
+/.local/
+/.env
+/.env.*
+!/.env.example
