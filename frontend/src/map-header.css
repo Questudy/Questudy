@@ -1,0 +1,150 @@
+.map-header {
+  display: grid;
+  grid-template-columns: minmax(240px,1.6fr) minmax(180px,1fr) minmax(178px,.95fr) minmax(220px,1.1fr) auto;
+  align-items: center;
+  gap: clamp(16px,2vw,40px);
+  min-height: 120px;
+  margin-bottom: 19px;
+  padding: 19px 23px;
+  border: 2px solid #c8b798;
+  background: linear-gradient(90deg,#f7f4eb70 0 15%,transparent 15%),#fffdf8;
+  box-shadow: 4px 5px 0 #c4e3d0,7px 8px 0 #e9eee0;
+  color: #504735
+}
+
+.source-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 0;
+  text-align: left
+}
+.source-book {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  height: 52px;
+  border: 2px solid #d4b64f;
+  background: #f4e9b8;
+  transform: rotate(-3deg)
+}
+.source-book .icon { width: 29px; height: 32px; stroke-width: 1.8 }
+.source-text { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; min-width: 0 }
+.map-header .file-badge {
+  padding: 4px 9px;
+  border: 1px solid #79c6a2;
+  border-radius: 6px;
+  background: #e6f5eb;
+  color: #327858;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap
+}
+.map-header .file-badge > span { font-weight: 700 }
+.source-info strong {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(17px,1.35vw,23px);
+  font-weight: 850;
+  letter-spacing: -.9px;
+  line-height: 1.45;
+  color: #393426
+}
+
+.progress-block { min-width: 0; padding: 10px 15px; border: 2px dashed #c7b594; background: #f4eddc }
+.progress-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; font-size: 12px; font-weight: 800 }
+.progress-heading > strong { color: #36835b; white-space: nowrap; font-size: 12px }
+.progress-track,.hp-track { overflow: hidden; border: 1px solid #bdab80; border-radius: 20px; background: #e6ddc3 }
+.progress-track { height: 14px }
+.progress-track > span { display: block; height: 100%; background: #79b88e; transition: width .5s }
+.progress-caption { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; color: #827661; font-size: 9px; white-space: nowrap }
+
+.player-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 2px solid #c8b798;
+  background: #fffdf8;
+  box-shadow: 3px 4px 0 #bfe0cb,5px 7px 0 #e3eee2
+}
+.heart { display: grid; place-items: center; flex: 0 0 31px; height: 33px; border: 2px solid #e5866a; border-radius: 12px; background: #fde6dc; color: #e83f4c; transform: rotate(-7deg) }
+.heart .icon { width: 20px; height: 20px; fill: currentColor; stroke-width: 0 }
+.player-block > div { flex: 1; min-width: 0 }
+.player-block > div > div:first-child { display: flex; justify-content: space-between; align-items: center; gap: 9px; margin-bottom: 6px; white-space: nowrap }
+.player-block b { font-size: 11px; font-weight: 900; letter-spacing: .15px }
+.player-block strong { color: #327a5b; font-size: 12px; font-weight: 800 }
+.player-block strong span { color: #9a8b75; font-size: 11px; font-weight: 400 }
+.hp-track { height: 14px; padding: 2px; background: #f0e9d7 }
+.hp-track > span { display: block; height: 100%; border-radius: 10px; background: #4db88a; transition: width .3s }
+
+.inventory-button { display: flex; align-items: center; justify-content: center; gap: 9px; min-width: 0; padding: 8px 12px; border: 2px solid #d0c0a2; background: #faf5e7; white-space: nowrap }
+.inventory-title { color: #796b54; font-size: 12px; font-weight: 800 }
+.inventory-pill { display: inline-flex; gap: 4px; align-items: center; padding: 5px 9px; border: 1px solid; border-radius: 18px; font-size: 12px; font-weight: 800 }
+.inventory-pill b { font-weight: 800 }
+.inventory-recovery { color: #b44a38; background: #fff5ee; border-color: #ee9b8e }
+.inventory-pass { color: #276581; background: #edf8ff; border-color: #90c8ea }
+
+.exit-buttons { display: flex; justify-content: flex-end; gap: 11px }
+.exit-buttons .button { min-height: 41px; padding: 9px 15px; border-width: 2px; border-radius: 13px; font-size: 12px; font-weight: 800 }
+.exit-buttons .button-paper { color: #554934; border-color: #c5ae80; background: #fff9e9; box-shadow: 3px 4px 0 #c2dfca,5px 7px 0 #e6eddc }
+.exit-buttons .button-end { color: #973f2f; border-color: #db816c; background: #ffe5da; box-shadow: 3px 4px 0 #f3d379,5px 7px 0 #fbebbb }
+
+@media(min-width:1600px) {
+  .map-header { min-height: 130px; padding: 20px 24px }
+  .source-book { flex-basis: 52px; height: 55px }
+  .map-header .file-badge { font-size: 13px }
+  .progress-heading,.progress-heading > strong { font-size: 13px }
+  .progress-caption { font-size: 10px }
+  .player-block b,.player-block strong,.inventory-title,.inventory-pill { font-size: 13px }
+  .exit-buttons .button { font-size: 13px }
+}
+
+@media(max-width:1350px) {
+  .map-header { grid-template-columns: 1fr 1fr 1.2fr; gap: 18px 24px }
+  .source-info { grid-column: 1 / 3; grid-row: 1 }
+  .exit-buttons { grid-column: 3; grid-row: 1 }
+  .progress-block { grid-column: 1; grid-row: 2 }
+  .player-block { grid-column: 2; grid-row: 2 }
+  .inventory-button { grid-column: 3; grid-row: 2 }
+}
+
+@media(max-width:650px) {
+  .map-header { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 14px 12px; padding: 16px 12px; margin-bottom: 15px }
+  .source-info { grid-column: 1 / -1; gap: 12px }
+  .source-info strong { font-size: 18px }
+  .source-book { flex-basis: 42px; height: 46px }
+  .source-text { gap: 5px }
+  .map-header .file-badge { font-size: 11px; padding: 3px 7px }
+  .progress-block { padding: 8px; align-self: stretch }
+  .progress-heading { gap: 4px; font-size: 10px }
+  .progress-heading > strong { font-size: 10px }
+  .progress-caption { flex-wrap: wrap; gap: 2px 5px; font-size: 8px }
+  .progress-track { height: 11px }
+  .player-block { gap: 7px; padding: 8px; align-self: center }
+  .player-block b { font-size: 9px }
+  .player-block strong,.player-block strong span { font-size: 10px }
+  .player-block > div > div:first-child { gap: 4px }
+  .heart { flex-basis: 24px; height: 29px; border-radius: 9px }
+  .heart .icon { width: 17px; height: 17px }
+  .hp-track { height: 12px }
+  .inventory-button { grid-column: 1 / -1; grid-row: 3; padding: 8px 12px; gap: 15px }
+  .inventory-title,.inventory-pill { font-size: 12px }
+  .exit-buttons { grid-column: 1 / -1; grid-row: 4; justify-content: flex-end }
+  .exit-buttons .button { min-height: 40px; font-size: 12px; padding: 8px 17px }
+}
+
+@media(max-width:370px) {
+  .map-header { gap: 12px 8px; padding: 14px 9px }
+  .source-info strong { font-size: 16px }
+  .progress-heading { flex-wrap: wrap; gap: 3px }
+  .progress-heading > strong { margin-left: auto }
+  .player-block { gap: 5px; padding: 6px }
+  .player-block > div > div:first-child { flex-wrap: wrap; gap: 2px }
+  .player-block strong { margin-left: auto }
+}

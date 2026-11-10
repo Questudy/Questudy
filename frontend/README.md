@@ -1,0 +1,67 @@
+# 탐험 지도 로컬 미리보기
+
+Node.js 22.12 이상에서 실행한다. TypeScript와 Vite를 사용하며, 최초 실행과 의존성 변경 후에는 잠금 파일 기준으로 개발 도구를 설치한다.
+
+```sh
+cd frontend
+npm ci
+npm run dev
+```
+
+브라우저에서 <http://127.0.0.1:5173>을 연다. Windows에서는 저장소 루트의 `dev-frontend.bat`로도 실행할 수 있다. 실행 파일은 개발 도구가 없으면 `npm ci`로 먼저 설치한다. 종료는 실행 터미널에서 `Ctrl+C`를 누른다. 포트가 사용 중이면 PowerShell에서 `$env:PORT=5174; npm run dev`로 변경한다. Vite가 TypeScript를 브라우저에서 실행할 JavaScript로 변환한다.
+
+현재 화면은 **목 데이터 프로토타입**이다. 실제 PDF 업로드·문제 풀이·아이템 사용·보상·저장·아카이빙은 연결하지 않았다. 새로고침하면 중앙 광장과 0% 진행도에서 다시 시작한다. 기존 FastAPI와 Swagger에는 변경이 없다. 글꼴은 Google Fonts를 사용하며 인터넷이 없으면 시스템 글꼴로 표시한다.
+
+## 조작
+
+- 화면은 상단 정보 바와 탐험 지도로 구성한다. 중앙 광장에서 네 자료 영역의 입구를 선택하고, 파일 정보는 상단 파일명·제목을 눌러 확인한다.
+- 갈림길을 선택하고 `난이도 고르기`를 누른다. 하·중·상 카드에서 난이도를 고른 뒤 `선택한 난이도로 구간 시작하기`로 확정한다. 확정 전에는 카드를 바꾸거나 지도로 돌아갈 수 있다. 확정한 난이도는 해당 자료·구간에 고정되며, 다음 인접 전투가 열린다.
+- 전투 노드의 `전투 미리보기` → `목 전투 완료하고 길 열기`로 완료 응답을 재현한다. 진행도는 전투 노드만 계산하며, 완료 시 인접 노드가 공개되고 주변 구름이 걷힌다. 실제 전투 판정은 하지 않는다.
+- 본 지도 드래그, 휠 확대·축소, 왼쪽 확대·축소·전체 보기·현재 위치 버튼을 사용한다. `갈 수 있는 곳 찾기`는 도전 가능한 노드를 순서대로 안내한다.
+- 전체 지도를 클릭하거나 누른 채 드래그하면 해당 위치를 확대해 보여준다. 이미 더 확대된 상태라면 그 배율을 유지한다. 미발견 노드가 공개되거나 플레이어 진행 상태가 바뀌지 않는다.
+- 전체 지도 박스의 제목 부분을 잡고 드래그하면 박스 자체를 지도 화면 안에서 옮길 수 있다. 제목에 포커스를 두고 방향키로도 옮긴다. 화면 크기가 바뀌면 박스가 지도 화면 밖으로 나가지 않도록 위치를 조정한다.
+- 설명 패널 우측 상단 `×`로 닫고 `노드 정보`로 다시 연다. `지도 보는 법`은 별도의 조작 설명을 연다.
+- 키보드: Tab으로 노드와 버튼을 이동하고 Enter/Space로 선택한다. 지도 또는 전체 지도에 포커스를 두고 방향키로 이동한다. 본 지도에서는 `+`/`-`도 사용할 수 있다. 설명 창은 Escape로 닫는다.
+- `나가기`와 `탐험 종료`에서는 목 데이터의 저장·아카이브 미지원 상태를 명시한다. 실제 저장 완료로 표시하지 않는다.
+
+## API 연결 경계
+
+`src/types.ts`는 지도·노드·난이도·서비스 응답 타입을 정의한다. `src/data/map.ts`는 문서 메타데이터·영역·노드 좌표·연결을 제공한다. 한 문서가 하나의 영역을 가지며 중앙 외에는 다른 자료 영역과 연결하지 않는다. 각 영역에 전투 10개와 난이도 갈림길 3개가 있다.
+
+`src/services/map-service.ts`가 목 서버 역할을 한다. 화면은 이 서비스가 반환한 snapshot의 `session.discovered`, `session.reachable`, `session.completed`, `session.difficulties`, `progress`를 표시한다. 공개·진입 가능 여부·진행도는 렌더러에서 별도로 판정하지 않는다.
+
+서비스 메서드:
+
+| 메서드 | 응답/동작 |
+| --- | --- |
+| `getMap()` | 지도 snapshot 조회 |
+| `moveTo(nodeId)` | 진입 가능 여부 확인 후 현재 노드를 갱신한 snapshot |
+| `chooseDifficulty(nodeId, easy/normal/hard)` | 난이도 고정·인접 노드 공개 후 snapshot |
+| `completeBattle(nodeId)` | **목 전용** 전투 완료·진행도·공개 상태 snapshot |
+| `endPreview()` | **목 전용** 미리보기 종료 |
+
+snapshot 구성:
+
+```ts
+{
+  id, title, world: { width, height },
+  areas: [{ id, documentId, fileName, documentTitle, pages, nodeIds, /* 색상·배치 */ }],
+  nodes: [{ id, kind, title, x, y, areaId, section, sequence, description, concepts }],
+  edges: [{ from, to }],
+  player: { hp, maxHp }, inventory: { recovery, pass },
+  session: { currentNodeId, completed, discovered, reachable, difficulties, status },
+  progress: { completed, total }
+}
+```
+
+실제 API의 URL·스키마·오류 규격은 아직 합의하지 않았다. 위 경계는 프론트의 임시 계약이며 백엔드에 구현을 강제하는 규격이 아니다. 백엔드 준비 시 조회·이동·난이도 응답을 이 형태로 변환하는 어댑터를 연결한다. `completeBattle`은 실제 답안 판정/전투 결과 응답으로 대체하고 프론트가 완료 판정을 전송하지 않도록 한다. `endPreview`는 실제 종료·아카이브 처리로 대체한다. 실제 저장·이동 API의 진행 중 표시·실패 복구·오류 응답도 함께 합의하고 통합 검증한다.
+
+## 검증
+
+```sh
+npm run typecheck
+npm test
+npm run build
+```
+
+`typecheck`는 앱·설정·테스트에 엄격한 TypeScript 타입 검사를 수행한다. `test`는 tsx와 Node 테스트 러너로 중앙 시작·미발견 진입 차단·인접 공개·분기/합류·난이도 고정·중복 완료 방지·전체 40개 전투 완료·종료 후 조작 차단을 확인한다. `build`는 타입 검사 후 배포용 파일을 `dist/`에 생성한다. `node_modules/`와 `dist/`는 Git에서 제외한다. 화면의 렌더링과 드래그 조작은 별도 브라우저 검증이 필요하다. 실제 백엔드 연결 및 전체 학습 흐름 검증을 완료한 상태는 아니다.

@@ -45,6 +45,12 @@ uv run --locked uvicorn backend.main:app --host 127.0.0.1 --port 8000
 
 Swagger UI의 기본 JS·CSS는 외부 CDN에서 불러오므로 화면 로딩에 인터넷 연결이 필요하다. API 요청은 로컬 백엔드로 전달된다.
 
+## 프론트엔드 탐험 지도 미리보기
+
+Node.js 22.12 이상에서 루트의 `dev-frontend.bat`를 실행한다. 터미널에서는 `frontend` 폴더에서 최초 `npm ci`로 개발 도구를 설치한 뒤 `npm run dev`를 실행한다. TypeScript + Vite로 실행하며 <http://127.0.0.1:5173>에서 확인한다. 타입 검사·테스트·빌드는 각각 `npm run typecheck`, `npm test`, `npm run build`를 사용한다.
+
+중앙 출발·지도 이동·미니맵·난이도 선택·단계별 구름 해제를 목 데이터로 확인하는 화면이다. 실제 PDF·전투·저장 API는 아직 연결하지 않았으며 새로고침하면 초기화된다. 실행과 조작, API 교체 경계는 [프론트엔드 안내](frontend/README.md)를 따른다.
+
 ## API 확인
 
 | 요청 | 결과 |
