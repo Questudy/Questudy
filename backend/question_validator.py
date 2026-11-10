@@ -14,6 +14,19 @@ REQUIRED_FIELDS = [
     "source_excerpt",
 ]
 
+# 각 필드가 가져야 하는 자료형 정의
+FIELD_TYPES = {
+    "id": str,
+    "document_id": str,
+    "difficulty": str,
+    "question": str,
+    "options": list,
+    "answer_index": int,
+    "explanation": str,
+    "source_page": int,
+    "source_excerpt": str,
+}
+
 # JSONL 문자열을 받아 문제 목록으로 변환하는 함수
 def parse_jsonl(jsonl_text):
     questions = []
@@ -49,21 +62,41 @@ def validate_required_fields(question):
         if field not in question:
             raise ValueError(f"필수 필드 누락: {field}")
 
+# 문제 하나의 필드 자료형을 검사하는 함수 
+def validate_field_types(question):
+
+    # 필드명과 예상 자료형을 하나씩 꺼내서 검사
+    for field, expected_type in FIELD_TYPES.items():
+
+         # 실제 자료형이 예상 자료형과 다르면 오류 발생
+        if type(question[field]) is not expected_type:
+            raise ValueError(
+                f"자료형 오류: {field}는 {expected_type.__name__}이어야 합니다."
+            )
+
+    # options 리스트 내부의 보기들도 문자열인지 확인
+    for index, option in enumerate(question["options"]):
+        if not isinstance(option, str):
+            raise ValueError(
+                f"자료형 오류: options[{index}]는 문자열이어야 합니다."
+            )
+
+
 
 
 # 이 파일을 직접 실행했을 때만 테스트 코드 실행
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
-    test_jsonl = """{"id":"q001","difficulty":"하"}
-{"id":"q002","difficulty":"중"}"""
+    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":"0","explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}"""
 
     # 1. JSONL을 Python 딕셔너리 목록으로 변환
     result = parse_jsonl(test_jsonl)
 
-    # 2. 문제 하나씩 필수 필드가 모두 있는지 확인
+    # 2. 문제별 검증
     for question in result:
         validate_required_fields(question)
+        validate_field_types(question)
 
      # 3. 모든 문제가 검증을 통과한 경우에만 출력
     print("모든 문제의 필수 필드 검사 통과")
