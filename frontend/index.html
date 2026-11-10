@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f4eb" />
+    <meta name="description" content="학습 자료가 모험이 되는 곳. Questudy 탐험 지도 로컬 미리보기." />
+    <title>탐험 지도 · Questudy</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%232f6b50'/%3E%3Cpath d='M10 12h12l3 4 3-4h10v25H27l-3 3-3-3H10z' fill='%23fff4cb'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="stylesheet" href="./src/map-header.css" />
+    <script type="module" src="./src/app.ts"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="adventure" aria-label="학습 탐험 지도">
+        <div class="map-header">
+          <button class="source-info" id="source-button"><span class="source-book" data-icon="atlas"></span><span class="source-text"><span class="file-badge" id="source-file">DB_03.pdf <span>· 38쪽</span></span><strong id="map-title">데이터베이스 3장 외 3개 자료</strong></span></button>
+          <div class="progress-block"><div class="progress-heading"><span>진행도</span><strong><span id="progress-label">0/40 클리어</span> · <span id="progress-percent">0%</span></strong></div><div class="progress-track"><span id="progress-fill"></span></div><div class="progress-caption"><span id="progress-caption">남은 전투 40곳</span><span id="fog-caption">안개 낀 곳 있음</span></div></div>
+          <div class="player-block"><span class="heart" data-icon="heart"></span><div><div><b>PLAYER HP</b><strong id="hp-value">80 <span>/ 100</span></strong></div><div class="hp-track"><span id="hp-fill"></span></div></div></div>
+          <button class="inventory-button" id="inventory-button"><span class="inventory-title">인벤토리</span><span class="inventory-pill inventory-recovery">회복 <b id="recovery-count">×2</b></span><span class="inventory-pill inventory-pass">PASS <b id="pass-count">×3</b></span></button>
+          <div class="exit-buttons"><button class="button button-paper" id="leave-button">나가기</button><button class="button button-end" id="end-button">탐험 종료</button></div>
+        </div>
+
+        <div class="map-frame">
+          <div class="map-viewport" id="viewport" tabindex="0" role="region" aria-label="탐험 지도. 방향키로 이동하고 더하기, 빼기로 확대 축소할 수 있습니다.">
+            <svg id="map-svg" xmlns="http://www.w3.org/2000/svg" aria-label="지식의 군도 탐험 지도"><defs id="map-defs"></defs><g id="world"><g id="landscape"></g><g id="paths"></g><g id="decorations"></g><g id="nodes"></g><g id="clouds" pointer-events="none"></g></g></svg>
+          </div>
+
+          <div class="map-tools"><div class="zoom-tools"><button id="zoom-in" class="map-tool" aria-label="지도 확대" title="확대 (+)"><span data-icon="plus"></span></button><span></span><button id="zoom-out" class="map-tool" aria-label="지도 축소" title="축소 (-)"><span data-icon="minus"></span></button></div><button id="fit-map" class="map-tool" aria-label="지도 전체 보기" title="지도 전체 보기"><span data-icon="expand"></span></button><button id="locate" class="map-tool" aria-label="현재 위치로 이동" title="현재 위치로 이동"><span data-icon="target"></span></button></div>
+          <div class="discovery-tools"><button id="find-node" class="find-button"><span data-icon="compass"></span>갈 수 있는 곳 찾기 <b id="available-count">4</b><span data-icon="chevron"></span></button><span class="pan-hint"><span data-icon="hand"></span>드래그해서 이동 · 휠로 확대 / 축소</span></div>
+          <div class="map-position"><span class="live-dot"></span><span id="position-label">중앙 · 출발의 광장</span></div>
+
+          <aside class="node-panel" id="node-panel" aria-label="선택한 노드 설명"></aside>
+          <button id="reopen-panel" class="reopen-panel" hidden><span data-icon="panel"></span>노드 정보</button>
+
+          <div class="bottom-tools"><button class="help-button" id="help-button"><span data-icon="help"></span>지도 보는 법</button><span class="zoom-label" id="zoom-label">100%</span></div>
+          <section class="minimap-card" aria-label="전체 지도"><button type="button" class="minimap-heading" aria-label="전체 지도 박스 이동. 드래그하거나 방향키로 위치를 조절하세요." title="제목을 잡고 드래그하면 박스가 이동해요"><span><span data-icon="map"></span>전체 지도</span><small>잡아서 이동</small></button><svg id="minimap" viewBox="0 0 2400 1800" role="img" aria-label="전체 지도. 클릭하거나 누른 채 드래그하면 해당 위치로 화면이 이동합니다." tabindex="0"></svg><span class="minimap-caption"><i></i>현재 보고 있는 위치</span></section>
+          <div id="loading" class="loading-overlay"><span class="loading-compass">✧</span><strong>모험의 지도를 펼치는 중…</strong></div>
+        </div>
+      </section>
+    </main>
+    <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
