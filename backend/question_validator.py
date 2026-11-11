@@ -141,6 +141,24 @@ def validate_duplicate_ids(questions):
         seen_ids.add(question_id)
 
 
+# 각 문제의 document_id가 실제 업로드된 PDF의 document_id와 일치하는지 검증
+def validate_document_id(questions, expected_document_id):
+
+    # 생성된 문제를 하나씩 검사
+    for question in questions:
+
+        # 문제에 저장된 문서 ID
+        document_id = question["document_id"]
+
+        # 실제 업로드된 PDF의 ID와 비교
+        if document_id != expected_document_id:
+            raise ValueError(
+                f"문서 ID 불일치: 문제 {question['id']} "
+                f"(기대값: {expected_document_id}, 실제값: {document_id})"
+            )
+
+
+
 
 
 
@@ -166,5 +184,9 @@ if __name__ == "__main__":
     # 3. 전체 문제 목록의 ID 중복 검사
     validate_duplicate_ids(result)
 
+    # 4. 모든 문제의 document_id가 실제 PDF의 ID와 일치하는지 검사
+    expected_document_id = "doc001"
+    validate_document_id(result, expected_document_id)
+
     # 4. 모든 문제가 검증을 통과한 경우에만 출력
-    print("모든 문제의 필수 필드 검사 통과")
+    print("모든 문제 검증 통과")
