@@ -82,13 +82,29 @@ def validate_field_types(question):
             )
 
 
+# 문자열 필드와 보기의 빈 값 검사
+def validate_non_empty_strings(question):
+
+    # 문자열 필드 검사
+    for field, value in question.items():
+        if isinstance(value, str) and not value.strip():
+            raise ValueError(f"빈 문자열 오류: {field}")
+
+    # 객관식 보기 검사
+    for index, option in enumerate(question["options"]):
+        if not option.strip():
+            raise ValueError(f"빈 문자열 오류: options[{index}]")
+
+
+
+
 
 
 # 이 파일을 직접 실행했을 때만 테스트 코드 실행
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
-    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":"0","explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}"""
+    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index": 0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}"""
 
     # 1. JSONL을 Python 딕셔너리 목록으로 변환
     result = parse_jsonl(test_jsonl)
@@ -97,6 +113,7 @@ if __name__ == "__main__":
     for question in result:
         validate_required_fields(question)
         validate_field_types(question)
+        validate_non_empty_strings(question)
 
      # 3. 모든 문제가 검증을 통과한 경우에만 출력
     print("모든 문제의 필수 필드 검사 통과")
