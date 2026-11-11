@@ -173,6 +173,32 @@ def validate_source_page(questions, total_pages):
             )
 
 
+# 문제의 출처 문장이 실제 PDF의 해당 페이지에 존재하는지 검증
+def validate_source_excerpt(questions, page_texts):
+
+    # 문제를 하나씩 검사
+    for question in questions:
+        source_page = question["source_page"]
+        source_excerpt = question["source_excerpt"]
+
+        # 해당 페이지에서 추출한 텍스트 가져오기
+        page_text = page_texts.get(source_page)
+
+        # 해당 페이지의 텍스트가 없는 경우
+        if page_text is None:
+            raise ValueError(
+                f"페이지 텍스트 없음: 문제 {question['id']} "
+                f"(페이지: {source_page})"
+            )
+
+        # 출처 문장이 해당 페이지에 존재하는지 확인
+        if source_excerpt not in page_text:
+            raise ValueError(
+                f"출처 문장 불일치: 문제 {question['id']} "
+                f"(페이지: {source_page})"
+            )
+
+
 
 
 
@@ -183,7 +209,7 @@ def validate_source_page(questions, total_pages):
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
-    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":10,"source_excerpt":"CPU는 연산을 수행한다."}
+    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
 {"id":"q002","document_id":"doc001","difficulty":"중","question":"RAM의 역할은?","options":["임시 저장","화면 출력"],"answer_index":0,"explanation":"RAM은 데이터를 임시 저장합니다.","source_page":2,"source_excerpt":"RAM은 데이터를 임시 저장한다."}"""
 
     # 1. JSONL을 Python 딕셔너리 목록으로 변환
@@ -207,6 +233,13 @@ if __name__ == "__main__":
      # 5. 문제의 출처 페이지가 실제 PDF의 페이지 범위 안에 있는지 검사
     total_pages = 10
     validate_source_page(result, total_pages)
+
+    # 6. 문제의 출처 문장이 실제 PDF 텍스트에 존재하는지 검사
+    page_texts = {
+        1: "CPU는 연산을 수행한다.",
+        2: "RAM은 데이터를 임시 저장한다."
+    }
+    validate_source_excerpt(result, page_texts)
 
     # 4. 모든 검증을 통과한 경우에만 출력
     print("모든 문제 검증 통과")
