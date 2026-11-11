@@ -123,6 +123,23 @@ def validate_answer_index(question):
             f"정답 인덱스 오류: {answer_index}"
         )
 
+# 문제 목록에서 ID 중복 여부를 검사
+def validate_duplicate_ids(questions):
+
+    # 이미 등장한 문제 ID를 저장할 집합
+    seen_ids = set()
+
+    # 문제 목록을 하나씩 순회
+    for question in questions:
+        question_id = question["id"]
+
+        # 이미 등장한 ID라면 오류 발생
+        if question_id in seen_ids:
+            raise ValueError(f"중복된 문제 ID: {question_id}")
+
+        # 처음 등장한 ID라면 집합에 저장
+        seen_ids.add(question_id)
+
 
 
 
@@ -132,7 +149,8 @@ def validate_answer_index(question):
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
-    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"상","question":"CPU의 역할은?","options":["연산", "제어"],"answer_index": 0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}"""
+    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
+{"id":"q002","document_id":"doc001","difficulty":"중","question":"RAM의 역할은?","options":["임시 저장","화면 출력"],"answer_index":0,"explanation":"RAM은 데이터를 임시 저장합니다.","source_page":2,"source_excerpt":"RAM은 데이터를 임시 저장한다."}"""
 
     # 1. JSONL을 Python 딕셔너리 목록으로 변환
     result = parse_jsonl(test_jsonl)
@@ -145,5 +163,8 @@ if __name__ == "__main__":
         validate_difficulty(question)      
         validate_answer_index(question)
 
-     # 3. 모든 문제가 검증을 통과한 경우에만 출력
+    # 3. 전체 문제 목록의 ID 중복 검사
+    validate_duplicate_ids(result)
+
+    # 4. 모든 문제가 검증을 통과한 경우에만 출력
     print("모든 문제의 필수 필드 검사 통과")
