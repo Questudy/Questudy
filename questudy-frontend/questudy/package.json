@@ -1,0 +1,1 @@
+﻿{"name":"questudy","version":"1.0.0","private":true,"type":"module","scripts":{"build":"tsc","typecheck":"tsc --noEmit","dev":"tsc --watch"},"devDependencies":{"typescript":"~5.9.3"}}

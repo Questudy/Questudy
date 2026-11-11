@@ -16,6 +16,22 @@
 
 백엔드는 테스트 스켈레톤 페이지에서 기능을 검증하고, 프론트는 제출용 화면을 만들며 검증된 기능부터 연결한다. 요청·응답 예시로 병행 작업을 시작하며, 검증과 인계 기준은 [개발 참여 기준](CONTRIBUTING.md#연결-합의와-구현)을 따른다.
 
+## 프론트엔드 작업 기준과 실행
+
+프론트엔드 작업은 [`questudy-frontend/questudy/`](questudy-frontend/questudy/)를 기준으로 한다. 실행 방법과 UI 원칙은 [프론트 README](questudy-frontend/questudy/README.md)를 따른다. 이 폴더는 현재 브라우저에서 문제 생성·전투·저장을 처리하는 로컬 구현이며, FastAPI 연결이 완료된 상태는 아니다. 제품 정책은 [기능 명세](docs/functional-spec.md), 백엔드 연결과 검증은 [개발 참여 기준](CONTRIBUTING.md#연결-합의와-구현)을 따른다.
+
+저장소 루트에서 다음과 같이 실행한다. Node.js와 Python 3이 필요하다.
+
+```powershell
+cd questudy-frontend/questudy
+npm.cmd ci
+npm.cmd run typecheck
+npm.cmd run build
+py -m http.server 8001 --bind 127.0.0.1 --directory web
+```
+
+브라우저에서 <http://127.0.0.1:8001>을 연다. 백엔드 기본 포트 `8000`과 구분해 사용한다. 현재 정적 서버에는 API 프록시가 없으며, 백엔드 연결 시 개발 프록시 또는 명시적인 CORS 허용 주소를 합의해야 한다.
+
 ## 백엔드 개발용 실행
 
 Python 3.12와 [uv](https://docs.astral.sh/uv/getting-started/installation/)를 사용한다. `.python-version`에 Python 버전, `pyproject.toml`에 직접 의존성, `uv.lock`에 설치 버전을 기록한다.
@@ -74,7 +90,8 @@ uv run --locked python -m pytest
 ## 디렉터리
 
 ```text
-frontend/           화면·사용자 입력·결과 표시
+questudy-frontend/questudy/  프론트 프로젝트 (화면·사용자 입력·결과 표시)
+frontend/           기존 예약 디렉터리 (현재 구현 없음)
 backend/            FastAPI 앱·요청/응답 모델·백엔드 테스트
 scripts/            공통 실행·개발 보조 작업
 tests/integration/  연결된 사용자 흐름 검증

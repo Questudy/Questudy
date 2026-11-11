@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#faf6ed">
+  <meta name="description" content="PDF에서 문제를 만들고, 한 칸씩 탐험하며 공부하는 퀘스터디">
+  <title>퀘스터디 · Questudy</title>
+  <link rel="stylesheet" href="./style.css?v=20261111-home-replay-15">
+</head>
+<body>
+  <header class="shell site-header">
+    <a class="brand" href="#home" aria-label="퀘스터디 홈"><img src="./assets/logo.svg" alt="Questudy"></a>
+    <nav aria-label="주 메뉴">
+      <a href="#maps">내 지도</a><a href="#create">지도 만들기</a>
+    </nav>
+  </header>
+  <div id="decor" aria-hidden="true"></div>
+  <main id="app" class="shell"></main>
+  <footer class="shell site-footer">
+    <span>Questudy</span>
+    <div><a href="#about">서비스 소개</a><a href="#contact">문의하기</a></div>
+  </footer>
+  <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+  <div id="notice" role="status" aria-live="polite"></div>
+  <script type="module" src="./dist/app.js?v=20261111-home-replay-15"></script>
+</body>
+</html>
