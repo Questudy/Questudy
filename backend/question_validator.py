@@ -198,6 +198,29 @@ def validate_source_excerpt(questions, page_texts):
                 f"(페이지: {source_page})"
             )
 
+# JSONL 문제 데이터를 파싱하고 모든 검증을 순서대로 실행하는 통합 함수
+def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts):
+
+    # 1. JSONL 파싱
+    questions = parse_jsonl(jsonl_text)
+
+    # 2. 개별 문제 검증
+    for question in questions:
+        validate_required_fields(question)
+        validate_field_types(question)
+        validate_non_empty_strings(question)
+        validate_difficulty(question)
+        validate_answer_index(question)
+
+    # 3. 전체 문제 목록 및 PDF 정보 검증
+    validate_duplicate_ids(questions)
+    validate_document_id(questions, expected_document_id)
+    validate_source_page(questions, total_pages)
+    validate_source_excerpt(questions, page_texts)
+
+    # 4. 모든 검증을 통과한 문제 목록 반환
+    return questions
+
 
 
 
@@ -206,40 +229,30 @@ def validate_source_excerpt(questions, page_texts):
 
 
 # 이 파일을 직접 실행했을 때만 테스트 코드 실행
+
+# 이 파일을 직접 실행했을 때만 테스트 코드 실행
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
     test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
 {"id":"q002","document_id":"doc001","difficulty":"중","question":"RAM의 역할은?","options":["임시 저장","화면 출력"],"answer_index":0,"explanation":"RAM은 데이터를 임시 저장합니다.","source_page":2,"source_excerpt":"RAM은 데이터를 임시 저장한다."}"""
 
-    # 1. JSONL을 Python 딕셔너리 목록으로 변환
-    result = parse_jsonl(test_jsonl)
-
-    # 2. 문제별 검증
-    for question in result:
-        validate_required_fields(question)
-        validate_field_types(question)
-        validate_non_empty_strings(question)
-        validate_difficulty(question)      
-        validate_answer_index(question)
-
-    # 3. 전체 문제 목록의 ID 중복 검사
-    validate_duplicate_ids(result)
-
-    # 4. 모든 문제의 document_id가 실제 PDF의 ID와 일치하는지 검사
+    # 테스트용 PDF 정보
     expected_document_id = "doc001"
-    validate_document_id(result, expected_document_id)
-
-     # 5. 문제의 출처 페이지가 실제 PDF의 페이지 범위 안에 있는지 검사
     total_pages = 10
-    validate_source_page(result, total_pages)
 
-    # 6. 문제의 출처 문장이 실제 PDF 텍스트에 존재하는지 검사
     page_texts = {
         1: "CPU는 연산을 수행한다.",
         2: "RAM은 데이터를 임시 저장한다."
     }
-    validate_source_excerpt(result, page_texts)
 
-    # 4. 모든 검증을 통과한 경우에만 출력
-    print("모든 문제 검증 통과")
+    # 모든 검증을 통합 함수 하나로 실행
+    result = validate_questions(
+        test_jsonl,
+        expected_document_id,
+        total_pages,
+        page_texts
+    )
+
+    # 모든 검증을 통과한 경우에만 출력
+    print(f"모든 문제 검증 통과! 총 {len(result)}개")
