@@ -205,12 +205,18 @@ def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts
     questions = parse_jsonl(jsonl_text)
 
     # 2. 개별 문제 검증
-    for question in questions:
-        validate_required_fields(question)
-        validate_field_types(question)
-        validate_non_empty_strings(question)
-        validate_difficulty(question)
-        validate_answer_index(question)
+    for line_number, question in enumerate(questions, start=1):
+        try:
+            validate_required_fields(question)
+            validate_field_types(question)
+            validate_non_empty_strings(question)
+            validate_difficulty(question)
+            validate_answer_index(question)
+        except ValueError as e:
+            question_id = question.get("id", "알 수 없음")
+            raise ValueError(
+                f"{line_number}번째 줄 (문제 ID: {question_id}): {e}"
+            ) from e
 
     # 3. 전체 문제 목록 및 PDF 정보 검증
     validate_duplicate_ids(questions)
@@ -222,13 +228,6 @@ def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts
     return questions
 
 
-
-
-
-
-
-
-# 이 파일을 직접 실행했을 때만 테스트 코드 실행
 
 # 이 파일을 직접 실행했을 때만 테스트 코드 실행
 if __name__ == "__main__":
