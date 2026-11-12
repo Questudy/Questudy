@@ -126,19 +126,24 @@ def validate_answer_index(question):
 # 문제 목록에서 ID 중복 여부를 검사
 def validate_duplicate_ids(questions):
 
-    # 이미 등장한 문제 ID를 저장할 집합
-    seen_ids = set()
+    # 이미 등장한 문제 ID와 첫 등장 줄 번호를 저장 
+    seen_ids = {}
 
-    # 문제 목록을 하나씩 순회
-    for question in questions:
+    # 문제 목록을 줄 번호와 함께 순회
+    for line_number, question in enumerate(questions, start=1):
         question_id = question["id"]
 
         # 이미 등장한 ID라면 오류 발생
         if question_id in seen_ids:
-            raise ValueError(f"중복된 문제 ID: {question_id}")
+            first_line = seen_ids[question_id]
+            raise ValueError(
+                f"{line_number}번째 줄: 문제 ID '{question_id}'가 중복되었습니다. "
+                f"(이미 {first_line}번째 줄에 존재하는 ID입니다.)"
+            )
 
-        # 처음 등장한 ID라면 집합에 저장
-        seen_ids.add(question_id)
+        # 처음 등장한 ID라면 줄 번호와 함께 저장
+        seen_ids[question_id] = line_number
+
 
 
 # 각 문제의 document_id가 실제 업로드된 PDF의 document_id와 일치하는지 검증
