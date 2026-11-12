@@ -149,8 +149,8 @@ def validate_duplicate_ids(questions):
 # 각 문제의 document_id가 실제 업로드된 PDF의 document_id와 일치하는지 검증
 def validate_document_id(questions, expected_document_id):
 
-    # 생성된 문제를 하나씩 검사
-    for question in questions:
+    # 생성된 문제를 줄 번호와 함께 검사
+    for line_number, question in enumerate(questions, start=1):
 
         # 문제에 저장된 문서 ID
         document_id = question["document_id"]
@@ -158,7 +158,7 @@ def validate_document_id(questions, expected_document_id):
         # 실제 업로드된 PDF의 ID와 비교
         if document_id != expected_document_id:
             raise ValueError(
-                f"문서 ID 불일치: 문제 {question['id']} "
+                f"{line_number}번째 줄: 문서 ID 불일치 - 문제 {question['id']} "
                 f"(기대값: {expected_document_id}, 실제값: {document_id})"
             )
 
@@ -238,7 +238,7 @@ def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
-    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
+    test_jsonl = """{"id":"q001","document_id":"doc002","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
 {"id":"q002","document_id":"doc001","difficulty":"중","question":"RAM의 역할은?","options":["임시 저장","화면 출력"],"answer_index":0,"explanation":"RAM은 데이터를 임시 저장합니다.","source_page":2,"source_excerpt":"RAM은 데이터를 임시 저장한다."}"""
 
     # 테스트용 PDF 정보
