@@ -166,14 +166,14 @@ def validate_document_id(questions, expected_document_id):
 # 문제의 출처 페이지가 실제 PDF의 페이지 범위 안에 있는지 검증
 def validate_source_page(questions, total_pages):
 
-    # 문제를 하나씩 검사
-    for question in questions:
+    # 문제를 줄 번호와 함께 검사 
+    for line_number, question in enumerate(questions, start=1):
         source_page = question["source_page"]
 
         # 페이지 번호는 1부터 PDF 전체 페이지 수까지 허용
         if not (1 <= source_page <= total_pages):
             raise ValueError(
-                f"페이지 범위 오류: 문제 {question['id']} "
+                f"{line_number}번째 줄: 페이지 범위 오류 - 문제 {question['id']} "
                 f"(페이지: {source_page}, PDF 전체: {total_pages}페이지)"
             )
 
@@ -238,7 +238,7 @@ def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts
 if __name__ == "__main__":
 
     # JSONL 형식의 테스트 데이터 (문제 2개)
-    test_jsonl = """{"id":"q001","document_id":"doc002","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
+    test_jsonl = """{"id":"q001","document_id":"doc001","difficulty":"하","question":"CPU의 역할은?","options":["연산","출력"],"answer_index":0,"explanation":"CPU는 연산을 수행합니다.","source_page":1,"source_excerpt":"CPU는 연산을 수행한다."}
 {"id":"q002","document_id":"doc001","difficulty":"중","question":"RAM의 역할은?","options":["임시 저장","화면 출력"],"answer_index":0,"explanation":"RAM은 데이터를 임시 저장합니다.","source_page":2,"source_excerpt":"RAM은 데이터를 임시 저장한다."}"""
 
     # 테스트용 PDF 정보
