@@ -203,11 +203,28 @@ def validate_source_excerpt(questions, page_texts):
                 f"(페이지: {source_page})"
             )
 
+
+# 생성된 문제 수가 요청한 문제 수와 일치하는지 검증
+def validate_question_count(questions, expected_count):
+
+    # 실제 생성된 문제 수
+    actual_count = len(questions)
+
+    # 요청한 문제 수와 실제 문제 수 비교
+    if actual_count != expected_count:
+        raise ValueError(
+            f"문제 수 불일치: 요청한 문제 {expected_count}개, "
+            f"실제 생성된 문제 {actual_count}개"
+        )
+
 # JSONL 문제 데이터를 파싱하고 모든 검증을 순서대로 실행하는 통합 함수
-def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts):
+def validate_questions(jsonl_text, expected_document_id, total_pages, page_texts, expected_count):
 
     # 1. JSONL 파싱
     questions = parse_jsonl(jsonl_text)
+
+    # 요청한 문제 수와 실제 생성된 문제 수 비교
+    validate_question_count(questions, expected_count)
 
     # 2. 개별 문제 검증
     for line_number, question in enumerate(questions, start=1):
@@ -255,8 +272,11 @@ if __name__ == "__main__":
         test_jsonl,
         expected_document_id,
         total_pages,
-        page_texts
+        page_texts,
+        expected_count=2
     )
 
     # 모든 검증을 통과한 경우에만 출력
     print(f"모든 문제 검증 통과! 총 {len(result)}개")
+
+
