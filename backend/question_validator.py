@@ -181,8 +181,8 @@ def validate_source_page(questions, total_pages):
 # 문제의 출처 문장이 실제 PDF의 해당 페이지에 존재하는지 검증
 def validate_source_excerpt(questions, page_texts):
 
-    # 문제를 하나씩 검사
-    for question in questions:
+    # 문제를 줄 번호와 함께 검사
+    for line_number,question in enumerate(questions, start=1):
         source_page = question["source_page"]
         source_excerpt = question["source_excerpt"]
 
@@ -192,14 +192,14 @@ def validate_source_excerpt(questions, page_texts):
         # 해당 페이지의 텍스트가 없는 경우
         if page_text is None:
             raise ValueError(
-                f"페이지 텍스트 없음: 문제 {question['id']} "
+                f"{line_number}번째 줄: 페이지 텍스트 없음 - 문제 {question['id']} "
                 f"(페이지: {source_page})"
             )
 
         # 출처 문장이 해당 페이지에 존재하는지 확인
         if source_excerpt not in page_text:
             raise ValueError(
-                f"출처 문장 불일치: 문제 {question['id']} "
+                f"{line_number}번째 줄: 출처 문장 불일치 - 문제 {question['id']} "
                 f"(페이지: {source_page})"
             )
 
